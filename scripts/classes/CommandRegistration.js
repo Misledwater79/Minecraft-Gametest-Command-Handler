@@ -60,9 +60,9 @@ class CustomCommand {
         const commandName = args?.shift()?.toLowerCase();
         const command = this.getCommand(commandName);
         if (!command || command.private && !player.hasTag({ tag: 'private', name: sender.nameTag }))
-            return new CommandError({ message: `${commandName} is an invalid command! Use the help command to get a list of all the commands.`, player: sender.nameTag, });
+            return new CommandError({ message: `§cUnknown command: ${commandName}. Please check that the command exists and that you have permission to use it`, player: sender.nameTag, });
         if(command.requiredTags.length && !player.hasAllTags({ tags: command.requiredTags, name: sender.nameTag }))
-            return new CommandError({ message: `you do not have the required permissions to use ${commandName}! you must have all of these tags to execute the command: ${command.requiredTags}`, player: sender.nameTag, })
+            return new CommandError({ message: `§cYou do not have the required permissions to use ${commandName}. You must have all of the required tags to execute this command`, player: sender.nameTag, })
         
         beforeChatPacket.cancel = command.cancelMessage
         
@@ -82,7 +82,7 @@ class CustomCommand {
         let timestamp = timestamps.find(elm => elm?.player == sender.nameTag)
         const expirationTime = timestamp ? timestamp?.cooldown + cooldownAmount : 0
         if(now < expirationTime) 
-          return new CommandError({ message: `Please wait ${MS(expirationTime - now)} before reusing the "${commandName}" command.`, player: sender.nameTag });
+          return new CommandError({ message: `§cPlease wait ${MS(expirationTime - now)} before reusing this command`, player: sender.nameTag });
 
         !!timestamp ? timestamps[timestamps.indexOf(timestamp)] = { ...timestamp, cooldown: now } : timestamps.push({ player: sender.nameTag, cooldown: now })
         
