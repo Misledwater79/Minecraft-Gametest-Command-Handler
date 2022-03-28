@@ -80,7 +80,7 @@ const registration = new CommandBuilder()
 .setName('test') //sets the name of the command, cannot be multiple words
 .setAliases(['t','te']) //sets the aliases of the command, can be multiple aliases
 .setDescription('illistration of the command handler!') //sets the description of the command
-.setUsage(['test', 'test <message>']) //shows how to use the command
+.setUsage(['test <message: message>','test <target: target>']) //shows how to use the command
 .setCancelMessage(true) //if true, the chat the player is trying to send wont be sent
 .setPrivate(false) //if true, the command wont show up in the help command and it cannot be accessed by players unless they have the private tag
 .setRequiredTags(['test','staff']) //these are the required tags to execute the command, if the player does not have all the required tags they cannot run the command
