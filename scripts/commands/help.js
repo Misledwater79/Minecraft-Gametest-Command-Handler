@@ -4,7 +4,7 @@ import CommandHandler from "../classes/CommandRegistration.js"
 
 const registration = new CommandBuilder()
 .setName('help')
-.setAliases(['h','?','hlp'])
+.setAliases(['?'])
 .setDescription('Provides help/list of command')
 .setUsage(['<page: int>','[command: CommandName]'])
 .setCancelMessage(true)
@@ -28,7 +28,9 @@ CommandHandler.register(registration, (interaction) => {
           const commands = CommandHandler.getAllCommands()
           let commandMap = []
           for(const [key, command] of commands){
-            if(command.private) continue
+            if(command.requiredTags.length > 0){
+              if(!command.requiredTags.every(tag => interaction.player.getTags().includes(tag))) continue
+            }
             for(const usage of command.usages){
               commandMap.push([command.name, usage])
             }
@@ -41,14 +43,15 @@ CommandHandler.register(registration, (interaction) => {
           commandMap.sort()
           let pages = Math.round(commandMap.length/7.0+0.5)
           if(pageRequest > pages){
-            message += `§2--- Showing help page ${pages} of ${pages} (/help <page>) ---\n§f`
+            message += `§2--- Showing help page ${pages} of ${pages} (${CommandHandler.getPrefix()}help <page>) ---\n§f`
             for(let i = 0; i < 7; i++){
               if(i + (pages-1) * 7 == commandMap.length) break;
               message += `${CommandHandler.getPrefix()}${commandMap[i + (pages-1) * 7][0]} ${commandMap[i + (pages-1) * 7][1]}\n`
             }
+            message += `§2Tip: You can use ${CommandHandler.getPrefix()}help <command: CommandName> to get more information about a certain command`
             break;
           }
-          message += `§2--- Showing help page ${pageRequest} of ${pages} (/help <page>) ---\n§f`
+          message += `§2--- Showing help page ${pageRequest} of ${pages} (${CommandHandler.getPrefix()}help <page>) ---\n§f`
           for(let i = 0; i < 7; i++){
             if(i + (pageRequest-1) * 7 == commandMap.length) break;
             message += `${CommandHandler.getPrefix()}${commandMap[i+(pageRequest-1)*7][0]} ${commandMap[i+(pageRequest-1)*7][1]}\n`
@@ -87,7 +90,9 @@ CommandHandler.register(registration, (interaction) => {
         const commands = CommandHandler.getAllCommands()
         let commandMap = []
         for(const [key, command] of commands){
-          if(command.private) continue
+          if(command.requiredTags.length > 0){
+            if(!command.requiredTags.every(tag => interaction.player.getTags().includes(tag))) continue
+          }
           for(const usage of command.usages){
             commandMap.push([command.name, usage])
           }
@@ -99,18 +104,18 @@ CommandHandler.register(registration, (interaction) => {
         }
         commandMap.sort()
         if(commandMap.length < 7){
-          message += `§2--- Showing help page 1 of 1 (/help <page>) ---\n§f`
+          message += `§2--- Showing help page 1 of 1 (${CommandHandler.getPrefix()}help <page>) ---\n§f`
           for(const command of commandMap){
             message += `${CommandHandler.getPrefix()}${command[0]} ${command[1] ? command[1] : ' '}\n`
           }
-          message += `§2Tip: You can use +help <command: CommandName> to get more information about a certain command`
+          message += `§2Tip: You can use ${CommandHandler.getPrefix()}help <command: CommandName> to get more information about a certain command`
           break;
         }
-        message += `§2--- Showing help page 1 of ${Math.round(commandMap.length/7.0+0.5)} (/help <page>) ---\n§f`
+        message += `§2--- Showing help page 1 of ${Math.round(commandMap.length/7.0+0.5)} (${CommandHandler.getPrefix()}help <page>) ---\n§f`
         for(let i = 0; i < 7; i++){
           message += `${CommandHandler.getPrefix()}${commandMap[i][0]} ${commandMap[i][1]}\n`
         }
-        message += `§2Tip: You can use +help <command: CommandName> to get more information about a certain command`
+        message += `§2Tip: You can use ${CommandHandler.getPrefix()}help <command: CommandName> to get more information about a certain command`
         break;
       default:
         break;
